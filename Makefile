@@ -7,5 +7,4 @@ download_unimorph:
 	./scripts/download-unimorph.sh
 
 morph_irregularity:
-	cd scil-morph-irregularity
-	make all
+	cd scil-morph-irregularity; make
