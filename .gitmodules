@@ -1,0 +1,6 @@
+[submodule "scil-morph-irregularity"]
+	path = scil-morph-irregularity
+	url = git@github.com:amnda-d/scil-morph-irregularity.git
+[submodule "scil-phonotactic-complexity"]
+	path = scil-phonotactic-complexity
+	url = git@github.com:amnda-d/scil-phonotactic-complexity.git
