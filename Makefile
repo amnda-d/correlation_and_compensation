@@ -3,6 +3,7 @@ download_northeuralex:
 
 download_unimorph:
 	mkdir -p data/unimorph
+	mkdir -p data/g2p
 	./scripts/download-unimorph.sh
 
 morph_irregularity:

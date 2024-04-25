@@ -31,7 +31,6 @@ Get G2P transcriptsion:
 
 ```
 python src/unimorph_to_ipa.py
-python src/unimorph_orthography.py
 ```
 
 Preprocess data:

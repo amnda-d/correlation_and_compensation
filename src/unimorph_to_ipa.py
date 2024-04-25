@@ -8,6 +8,7 @@ with open('src/unimorph_epitran_codes.tsv', "r", encoding="utf-8") as fp:
         codes[line[1]] = line[2]
 
 languages= codes.keys()
+languages = ['kbd', 'tel']
 
 def get_paradigms(fp):
     paradigms = []
