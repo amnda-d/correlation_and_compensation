@@ -8,4 +8,4 @@ download_unimorph:
 
 morph_irregularity:
 	cd scil-morph-irregularity
-	make
+	make all

@@ -62,7 +62,7 @@ Get phonotactic complexity scores for UniMorph:
 ## Morphological Complexity
 
 ```
-./scripts/run-unimorph.sh
+./scripts/train-morph.sh
 ```
 
 ## Frequency Data
