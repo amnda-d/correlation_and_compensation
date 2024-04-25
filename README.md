@@ -14,10 +14,6 @@ nltk==3.8.1
 smart_open==6.4.0
 ```
 
-```
-make morph-irregularity
-```
-
 ## Download Data
 
 ```
