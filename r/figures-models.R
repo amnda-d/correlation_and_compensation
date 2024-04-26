@@ -1,10 +1,7 @@
 library(tidyverse)
 library(ggthemes)
 library(lme4)
-# library(sjPlot)
-# library(ggeffects)
-# library(RColorBrewer)
-# library(broom.mixed)
+library(broom.mixed)
 
 source("r/util.R")
 

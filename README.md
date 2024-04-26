@@ -96,7 +96,8 @@ smart_open==6.4.0
 R 4.3.3
 
 ```
+broom.mixed_0.2.9.4
+ggthemes_5.1.0
 lme4_1.1-35.3
 tidyverse_2.0.0
-ggthemes_5.1.0
 ```
