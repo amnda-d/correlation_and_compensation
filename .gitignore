@@ -1,4 +1,5 @@
 slurm_test
-data/unimorph
-data/g2p
-data/wiki
+data
+figs-final
+Rplots.pdf
+data_scil

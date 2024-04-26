@@ -73,6 +73,10 @@ python src/generate_data.py
 
 ### 7. Generate Plots
 
+```
+Rscript r/figures-models.R
+```
+
 ## Requirements
 
 Python 3.11.5
@@ -89,4 +93,10 @@ nltk==3.8.1
 smart_open==6.4.0
 ```
 
-To test: 3, 6, 7
+R 4.3.3
+
+```
+lme4_1.1-35.3
+tidyverse_2.0.0
+ggthemes_5.1.0
+```

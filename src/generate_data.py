@@ -10,6 +10,7 @@ with open('src/unimorph_epitran_codes.tsv', "r", encoding="utf-8") as fp:
         codes[line[1]] = line[2]
 
 languages = codes.keys()
+languages = ['kbd', 'tel']
 
 with open('data/processed.tsv', 'w+', encoding="utf-8") as fp:
     fp.write('lang\ttarget\tmorph_pred\tmorph_loss\tmorph_complexity\tmorph_edit_dist\tphon_loss\tphon_len\tconcept\tbase\tpos\tinflection\tbase_str\ttarget_str\tcount\tfreq\tortho_morph_pred\tortho_morph_loss\tortho_morph_complexity\tortho_morph_edit_dist\n')
