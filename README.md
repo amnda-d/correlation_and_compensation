@@ -74,6 +74,7 @@ python src/generate_data.py
 ### 7. Generate Plots
 
 ```
+mkdir figs-final
 Rscript r/figures-models.R
 ```
 

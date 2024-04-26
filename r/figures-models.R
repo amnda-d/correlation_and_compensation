@@ -110,7 +110,7 @@ mi.pc.lem <- model.by.lang(
 )
 plot.by.lang.2(mi.pc.lem, mi.pc, "By Lexeme", "By Word")
 ggsave(
-  "figs-final/corr_mi_pc_g2p.png", width = 6, height = 4, create.dir = TRUE
+  "figs-final/corr_mi_pc_g2p.png", width = 6, height = 4
 )
 
 pc.wl <- model.by.lang(
