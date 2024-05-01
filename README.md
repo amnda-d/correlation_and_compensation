@@ -73,9 +73,17 @@ python src/generate_data.py
 
 ### 7. Generate Plots
 
+Main plots and models:
+
 ```
 mkdir figs-final
 Rscript r/figures-models.R
+```
+
+Appendix plots:
+
+```
+Rscript r/appendix-figures.R
 ```
 
 ## Requirements

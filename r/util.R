@@ -78,6 +78,58 @@ plot_across_langs <- function(d, v1, v2, lab1 = "", lab2 = "") {
     ylab(lab2)
 }
 
+lang_to_type <- function(data) {
+  case_match(
+    data,
+    "Amharic" ~ "Fusional",
+    "Azerbaijani" ~ "Agglutinative",
+    "Bengali" ~ "Fusional",
+    "Catalan" ~ "Fusional",
+    "Cebuano" ~ "Agglutinative",
+    "Czech" ~ "Fusional",
+    "Kashubian" ~ "Fusional",
+    "German" ~ "Fusional",
+    "English" ~ "Fusional",
+    "French" ~ "Fusional",
+    "Gothic" ~ "Fusional",
+    "Serbo Croatian" ~ "?",
+    "Hindi" ~ "Fusional",
+    "Hungarian" ~ "Agglutinative",
+    "Indonesian" ~ "Agglutinative",
+    "Italian" ~ "Fusional",
+    "Kazakh" ~ "Agglutinative",
+    "Kabardian" ~ "Agglutinative",
+    "Mongolian" ~ "?",
+    "Kyrgyz" ~ "Agglutinative",
+    "Maori" ~ "Agglutinative",
+    "Maltese" ~ "Fusional",
+    "Dutch" ~ "Fusional",
+    "Chewa" ~ "Agglutinative",
+    "O\"odham" ~ "Agglutinative",
+    "Oromo" ~ "Fusional",
+    "Polish" ~ "Fusional",
+    "Portuguese" ~ "Fusional",
+    "Romanian" ~ "Fusional",
+    "Russian" ~ "Fusional",
+    "Shona" ~ "Agglutinative",
+    "Spanish" ~ "Fusional",
+    "Swahili" ~ "Fusional",
+    "Swedish" ~ "Fusional",
+    "Albanian" ~ "Fusional",
+    "Telugu" ~ "Agglutinative",
+    "Tajik" ~ "Fusional",
+    "Tagalog" ~ "Agglutinative",
+    "Turkmen" ~ "Agglutinative",
+    "Turkish" ~ "Agglutinative",
+    "Uyghur" ~ "Agglutinative",
+    "Ukrainian" ~ "Fusional",
+    "Urdu" ~ "Fusional",
+    "Uzbek" ~ "Agglutinative",
+    "Zulu" ~ "Agglutinative",
+    .default = data
+  )
+}
+
 code_to_name <- function(data) {
   case_match(
     data,
@@ -257,4 +309,78 @@ plot.by.lang.2 <- function(
     xlab("Language") +
     ylab("Coefficient") +
     ggtitle(title)
+}
+
+plot_lang_facet <- function(data, x_axis, y_axis, x_lab, y_lab) {
+  ggplot() +
+    geom_jitter(
+      aes(x = .data[[x_axis]], y = .data[[y_axis]]),
+      alpha = 0.01,
+      color = "#1A4571",
+      data = data
+    ) +
+    geom_smooth(
+      aes(x = .data[[x_axis]], y = .data[[y_axis]]),
+      method = "lm",
+      color = "#073361",
+      fill = "#1A4571",
+      data = data
+    ) +
+    xlab(x_lab) +
+    ylab(y_lab) +
+    facet_wrap(~lang, ncol = 5) +
+    theme_hc()
+}
+
+plot_lang_facet_2 <- function(data1,
+                              data2,
+                              x_axis_1,
+                              y_axis_1,
+                              x_axis_2,
+                              y_axis_2,
+                              x_lab,
+                              y_lab,
+                              lab1,
+                              lab2,
+                              color1,
+                              color2,
+                              color1_dark,
+                              color2_dark) {
+  ggplot() +
+    geom_jitter(
+      aes(x = .data[[x_axis_2]], y = .data[[y_axis_2]], color = "b"),
+      data = data2,
+      alpha = 0.01
+    ) +
+    geom_jitter(
+      aes(x = .data[[x_axis_1]], y = .data[[y_axis_1]], color = "a"),
+      data = data1,
+      alpha = 0.01
+    ) +
+    geom_smooth(
+      aes(x = .data[[x_axis_2]], y = .data[[y_axis_2]], fill = "b"),
+      method = "lm",
+      color = color2_dark,
+      data = data2
+    ) +
+    geom_smooth(
+      aes(x = .data[[x_axis_1]], y = .data[[y_axis_1]], fill = "a"),
+      method = "lm",
+      color = color1_dark,
+      data = data1
+    ) +
+    theme_hc() +
+    xlab(x_lab) +
+    ylab(y_lab) +
+    facet_wrap(~lang, ncol = 5) +
+    scale_colour_manual(
+      name = "",
+      values = c("a" = color1, "b" = color2),
+      labels = c(lab1, lab2)
+    ) +
+    scale_fill_manual(
+      name = "",
+      values = c("a" = color1, "b" = color2),
+      labels = c(lab1, lab2)
+    )
 }

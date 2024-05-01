@@ -1,6 +1,6 @@
 #!/bin/bash
 
-languages=("sqi" "amh" "aze" "ben" "cat" "ceb" "nya" "ces" "nld" "got" "hin" "ind" "kbd" "csb" "kaz" "khk" "kir" "mlt" "mao" "ood" "orm" "pol" "ron" "sna" "swc" "swe" "tgl" "tel" "tuk" "ukr" "urd" "uig" "uzb" "zul" "tgk" "hbs" "hun" "ita" "rus" "spa" "tur" "deu" "eng" "fra" "por")
+languages=("sqi" "amh" "aze" "ben" "cat" "ceb" "nya" "ces" "nld" "got" "hin" "ind" "kbd" "csb" "kaz" "khk" "kir" "mlt" "mao" "orm" "pol" "ron" "sna" "swc" "swe" "tgl" "tel" "tuk" "ukr" "urd" "uig" "uzb" "zul" "tgk" "hbs" "hun" "ita" "rus" "spa" "tur" "deu" "eng" "fra" "por")
 nfold=10
 
 for lang in ${languages[*]}; do

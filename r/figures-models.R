@@ -94,7 +94,21 @@ data_words_pim <- data_words_pim %>% filter(lang %in% include_langs)
 data_words_pim$lang <- as.factor(data_words_pim$lang)
 
 data_g2p <- data %>% filter(morph_complexity != "NA") %>% transform_data()
+data_g2p$type <- lang_to_type(as.character(data_g2p$lang))
 data_base_g2p <- group_by_base(data_g2p) %>% transform_data()
+data_base_g2p$type <- lang_to_type(as.character(data_base_g2p$lang))
+
+# data_g2p <- data_g2p %>%
+#   mutate(lang = paste(
+#     case_match(type, "Agglutinative" ~ sprintf("\u25A0"), "Fusional" ~ sprintf("\u25A1"), "?" ~ ""),
+#     lang
+#     ))
+# 
+# data_base_g2p <- data_base_g2p %>%
+#   mutate(lang = paste(
+#     case_match(type, "Agglutinative" ~ sprintf("\u25A0"), "Fusional" ~ sprintf("\u25A1"), "?" ~ ""),
+#     lang
+#   ))
 
 # figures
 
