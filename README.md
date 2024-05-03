@@ -35,18 +35,10 @@ Preprocess data:
 
 ### 3. Phonotactic Complexity
 
-Parse the data:
+Parse data and train model:
 
 ```
-cd scil-phonotactic-complexity
-python data_layer/parse.py --data northeuralex
-```
-
-Train the model:
-
-```
-cd scil-phonotactic-complexity
-python learn_layer/train_base_cv.py --model phoible
+./scripts/train-phono.sh
 ```
 
 Get phonotactic complexity scores for UniMorph:
