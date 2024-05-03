@@ -16,6 +16,7 @@ To run the experiments and produce the figures in the paper, follow these steps:
 ```
 make download_unimorph
 make download_northeuralex
+make download_wikipron
 ```
 
 ### 2. Process Unimorph
@@ -37,12 +38,14 @@ Preprocess data:
 Parse the data:
 
 ```
-python scil-phonotactic-complexity/data_layer/parse.py --data northeuralex
+cd scil-phonotactic-complexity
+python data_layer/parse.py --data northeuralex
 ```
 
 Train the model:
 
 ```
+cd scil-phonotactic-complexity
 python learn_layer/train_base_cv.py --model phoible
 ```
 
