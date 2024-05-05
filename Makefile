@@ -11,4 +11,5 @@ download_wikipron:
 	python src/parse-wikipron.py
 	cat data/wikipron/formatted.tsv >> scil-phonotactic-complexity/datasets/northeuralex/orig.csv
 	sed -i '' 's/^hrv/hbs/' scil-phonotactic-complexity/datasets/northeuralex/orig.csv
-	sed -i '' 's/^aze/azj/' scil-phonotactic-complexity/datasets/northeuralex/orig.csv
+	sed -i '' 's/^azj/aze/' scil-phonotactic-complexity/datasets/northeuralex/orig.csv
+	sed -i '' 's/^uzn/uzb/' scil-phonotactic-complexity/datasets/northeuralex/orig.csv
