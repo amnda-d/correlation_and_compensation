@@ -3,6 +3,12 @@ import re
 import math
 from collections import defaultdict
 
+def parse_target(ipa):
+    ipa = ipa.strip().split(' ')
+    ipa = [x for x in ipa if x != '']
+    ipa = [x[:-1] if x[-1] in ['ː', ':'] else x for x in ipa]
+    return ' '.join(ipa)
+
 codes = {}
 with open('src/unimorph_epitran_codes.tsv', "r", encoding="utf-8") as fp:
     for line in fp:
@@ -31,6 +37,7 @@ for lang in languages:
         with open(f'data/g2p/{lang}.tsv', "r", encoding="utf-8") as fp:
             for line in fp:
                 base_str, base, target_str, target, tags = line.strip('\n').split('\t')
+                target = parse_target(target)
                 data[(lang, target.strip())] = {
                     'lang': lang,
                     'target_str': target_str.lower().strip(),
@@ -52,6 +59,7 @@ for lang in languages:
                     next(fp)
                     for line in fp:
                         pred, target, loss, dist = line.strip('\n').split('\t')
+                        target = parse_target(target)
                         loss = math.exp(-float(loss))
                         # print(lang, target)
                         try:
@@ -63,7 +71,7 @@ for lang in languages:
                             'morph_complexity': -math.log(loss/(1-loss)),
                             'morph_edit_dist': dist,
                             })
-                        except ValueError as e:
+                        except Exception as e:
                             print(e, loss)
     
     # if os.path.exists(f'data/ortho/{lang}/model'):
@@ -100,6 +108,7 @@ for lang in languages:
                     for line in fp:
                         try:
                             base, target, tags = line.strip('\n').split('\t')
+                            target = parse_target(target)
                             pos, inflection = tags.split(';')[0], ';'.join(tags.split(';')[1:])
                             data[(lang, target.strip())].update({
                             'base': base,
@@ -147,6 +156,7 @@ for lang in languages:
                     line = line.strip('\n').split(',')
                     concept = line[1]
                     target = line[3]
+                    target = parse_target(target)
                     length = line[4]
                     loss = line[5]
                     # for k in data_bases[(lang, target)].keys():
