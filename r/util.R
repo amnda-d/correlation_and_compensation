@@ -72,10 +72,12 @@ plot_across_langs <- function(d, v1, v2, lab1 = "", lab2 = "") {
     ggplot(aes(x = mean_v1, y=mean_v2)) +
     geom_smooth(color = "#1A4571") +
     geom_smooth(method = "lm", color = "#FF5A48") +
-    geom_text(aes(label = lang)) +
+    geom_text(aes(label = lang, family = "Times")) +
     theme_hc() +
     xlab(lab1) +
-    ylab(lab2)
+    ylab(lab2) +
+    theme(text = element_text(family = "Times", size = 20)) + 
+    scale_x_continuous(expand = expansion(mult = 0.1))
 }
 
 lang_to_type <- function(data) {
@@ -144,7 +146,7 @@ code_to_name <- function(data) {
     "eng" ~ "English",
     "fra" ~ "French",
     "got" ~ "Gothic",
-    "hbs" ~ "Serbo Croatian",
+    "hbs" ~ "Serbo-Croatian",
     "hin" ~ "Hindi",
     "hun" ~ "Hungarian",
     "ind" ~ "Indonesian",
@@ -188,7 +190,10 @@ model.by.lang <- function(data, f, param) {
     do(
       tidy(lm(f, data = .), conf.int = TRUE)
     ) %>%
-    filter(term == param)
+    filter(term == param) %>%
+    mutate(
+      p.value = p.adjust(p.value, method = "fdr")
+    )
   d$Significant <- d$p.value < 0.05
   d <- d %>% mutate(lang = factor(lang, levels = (d %>% arrange(estimate))$lang))
   return(d)
@@ -216,12 +221,13 @@ plot.by.lang <- function(d, title = "") {
       stroke = 1.5,
       color = "#1A4571"
     ) +
-    scale_shape_manual(values = c(4, 16)) +
+    scale_shape_manual(name = "", values = c(4, 16), labels = c("p > 0.05", "p < 0.05")) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
     theme_hc() +
     xlab("Language") +
     ylab("Coefficient") +
-    ggtitle(title)
+    ggtitle(title) +
+    theme(text = element_text(family = "Times", size = 20))
 }
 
 plot.by.lang.sig <- function(d, title = "") {
@@ -246,12 +252,13 @@ plot.by.lang.sig <- function(d, title = "") {
       stroke = 1.5,
       color = "#1A4571"
     ) +
-    scale_shape_manual(values = c(16, 4)) +
+    scale_shape_manual(name = "", values = c(16, 4), labels = c("p < 0.05", "p > 0.05")) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
     theme_hc() +
     xlab("Language") +
     ylab("Coefficient") +
-    ggtitle(title)
+    ggtitle(title) +
+    theme(text = element_text(family = "Times", size = 20))
 }
 
 plot.by.lang.2 <- function(
@@ -303,15 +310,22 @@ plot.by.lang.2 <- function(
       values = c("a" = colora, "b" = colorb),
       labels = c(lab1, lab2)
     ) +
-    scale_shape_manual(values = c(4, 16)) +
+    scale_shape_manual(name = "", values = c(4, 16), labels = c("p > 0.05", "p < 0.05")) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
     theme_hc() +
     xlab("Language") +
     ylab("Coefficient") +
-    ggtitle(title)
+    ggtitle(title) +
+    theme(text = element_text(family = "Times", size = 20))
 }
 
-plot_lang_facet <- function(data, x_axis, y_axis, x_lab, y_lab) {
+plot_lang_facet <- function(data, x_axis, y_axis, x_lab, y_lab, frm) {
+  fits <- data %>%
+    group_by(lang) %>%
+    do(
+      predict_response(lm(frm, .), terms = c(x_axis))
+    )
+  
   ggplot() +
     geom_jitter(
       aes(x = .data[[x_axis]], y = .data[[y_axis]]),
@@ -319,55 +333,84 @@ plot_lang_facet <- function(data, x_axis, y_axis, x_lab, y_lab) {
       color = "#1A4571",
       data = data
     ) +
-    geom_smooth(
-      aes(x = .data[[x_axis]], y = .data[[y_axis]]),
-      method = "lm",
-      color = "#073361",
+    geom_ribbon(
+      aes(x = x, ymin = conf.low, ymax = conf.high),
+      alpha = 0.5,
       fill = "#1A4571",
-      data = data
+      data = fits
+    ) +
+    geom_smooth(
+      aes(x = x, y = predicted),
+      method = "lm",
+      se = FALSE,
+      color = "#073361",
+      data = fits
     ) +
     xlab(x_lab) +
     ylab(y_lab) +
     facet_wrap(~lang, ncol = 5) +
-    theme_hc()
+    theme_hc() +
+    theme(text = element_text(family = "Times", size = 20))
 }
 
 plot_lang_facet_2 <- function(data1,
                               data2,
-                              x_axis_1,
-                              y_axis_1,
-                              x_axis_2,
-                              y_axis_2,
+                              x_axis,
+                              y_axis,
                               x_lab,
                               y_lab,
                               lab1,
                               lab2,
+                              fill1,
+                              fill2,
                               color1,
                               color2,
-                              color1_dark,
-                              color2_dark) {
+                              frm) {
+  fits1 <- data1 %>%
+    group_by(lang) %>%
+    do(
+      predict_response(lm(frm, .), terms = c(x_axis))
+    )
+  fits1$group <- lab1
+  
+  fits2 <- data2 %>%
+    group_by(lang) %>%
+    do(
+      predict_response(lm(frm, .), terms = c(x_axis))
+    )
+  fits2$group <- lab2
+  
+  fits <- bind_rows(fits1, fits2) %>% mutate(group = factor(group, levels = c(lab1, lab2)))
+  
+  data1$group <- lab1
+  data2$group <- lab2
+  d <- bind_rows(data1, data2) %>% mutate(group = factor(group, levels = c(lab1, lab2)))
+  
   ggplot() +
     geom_jitter(
-      aes(x = .data[[x_axis_2]], y = .data[[y_axis_2]], color = "b"),
-      data = data2,
-      alpha = 0.01
+      aes(x = .data[[x_axis]], y = .data[[y_axis]]),
+      data = data1,
+      color = fill1,
+      alpha = 0.05,
+      stroke = 0
     ) +
     geom_jitter(
-      aes(x = .data[[x_axis_1]], y = .data[[y_axis_1]], color = "a"),
-      data = data1,
-      alpha = 0.01
+      aes(x = .data[[x_axis]], y = .data[[y_axis]]),
+      data = data2,
+      color = fill2,
+      alpha = 0.05,
+      stroke = 0
+    ) +
+    geom_ribbon(
+      aes(x = x, ymin = conf.low, ymax = conf.high, fill = group),
+      alpha = 0.5,
+      data = fits
     ) +
     geom_smooth(
-      aes(x = .data[[x_axis_2]], y = .data[[y_axis_2]], fill = "b"),
+      aes(x = x, y = predicted, color = group),
       method = "lm",
-      color = color2_dark,
-      data = data2
-    ) +
-    geom_smooth(
-      aes(x = .data[[x_axis_1]], y = .data[[y_axis_1]], fill = "a"),
-      method = "lm",
-      color = color1_dark,
-      data = data1
+      se = FALSE,
+      data = fits
     ) +
     theme_hc() +
     xlab(x_lab) +
@@ -375,12 +418,11 @@ plot_lang_facet_2 <- function(data1,
     facet_wrap(~lang, ncol = 5) +
     scale_colour_manual(
       name = "",
-      values = c("a" = color1, "b" = color2),
-      labels = c(lab1, lab2)
+      values = c(color1, color2)
     ) +
     scale_fill_manual(
       name = "",
-      values = c("a" = color1, "b" = color2),
-      labels = c(lab1, lab2)
-    )
+      values = c(fill1, fill2)
+    ) +
+    theme(text = element_text(family = "Times", size = 20))
 }

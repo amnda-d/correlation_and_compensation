@@ -223,3 +223,25 @@ for lang in languages:
 
     with open('data/processed.tsv', 'a', encoding="utf-8") as fp:
         fp.writelines(lines)
+
+print("phono lang results")
+with open('data/phono-lang-results.csv', 'w+', encoding="utf-8") as outfile:
+    outfile.write('lang,avg_len,shannon,test_shannon,test_loss,test_acc,val_loss,val_acc\n')
+    for lang in languages:
+        print(lang)
+        if os.path.exists(f'scil-phonotactic-complexity/results/northeuralex/cv/orig/{lang}/phoible__results-final.csv'):
+            with open(f'scil-phonotactic-complexity/results/northeuralex/cv/orig/{lang}/phoible__results-final.csv', "r", encoding="utf-8") as fp:
+                fp.readline()
+                out_line = fp.readline()
+                outfile.write(out_line)
+
+print("phono results")
+with open('data/phono-results.csv', 'w+', encoding="utf-8") as outfile:
+    outfile.write('lang,concept_id,phoneme_id,phoneme,phoneme_len,phoneme_loss\n')
+    for lang in languages:
+        print(lang)
+        if os.path.exists(f'scil-phonotactic-complexity/results/northeuralex/cv/orig/{lang}/phoible__results-per-word.csv'):
+            with open(f'scil-phonotactic-complexity/results/northeuralex/cv/orig/{lang}/phoible__results-per-word.csv', "r", encoding="utf-8") as fp:
+                fp.readline()
+                out_line = fp.read()
+                outfile.write(out_line)

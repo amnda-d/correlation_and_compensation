@@ -2,6 +2,7 @@ library(tidyverse)
 library(ggthemes)
 library(lme4)
 library(broom.mixed)
+library(ggeffects)
 
 source("r/util.R")
 
@@ -14,7 +15,6 @@ exclude_langs <- c(
   "Indonesian",
   "Kabardian",
   "Kashubian",
-  "Kazakh",
   "Kyrgyz",
   "Maltese",
   "Maori",
@@ -26,8 +26,6 @@ exclude_langs <- c(
   "Turkmen",
   "Urdu",
   "Uyghur",
-  "Uzbek",
-  "Chewa",
   "Tajik",
   "Gothic"
 )
@@ -66,7 +64,7 @@ include_langs <- c(
   "German",
   "Hungarian",
   "Italian",
-  "Khalka Mongolian",
+  "Mongolian",
   "Polish",
   "Portuguese",
   "Romanian",
@@ -75,24 +73,26 @@ include_langs <- c(
   "Spanish",
   "Swedish",
   "Turkish",
-  "Ukranian",
-  "Zulu"
+  "Ukrainian",
+  "Zulu",
+  "Kazakh",
+  "Chewa",
+  "Uzbek"
 )
 
 data_pim <- read.csv(
-  "scil-phonotactic-complexity/results/northeuralex/cv/orig/phoible__results-final.csv"
+  "data/phono-lang-results.csv"
 )
 data_pim$lang <- code_to_name(data_pim$lang)
 data_pim <- data_pim %>% filter(lang %in% include_langs)
 data_pim$lang <- as.factor(data_pim$lang)
 
 data_words_pim <- read.csv(
-  "scil-phonotactic-complexity/results/northeuralex/cv/orig/phoible__results-per-word.csv"
+  "data/phono-results.csv"
 )
 data_words_pim$lang <- code_to_name(data_words_pim$lang)
 data_words_pim <- data_words_pim %>% filter(lang %in% include_langs)
 data_words_pim$lang <- as.factor(data_words_pim$lang)
-
 data_g2p <- data %>% filter(morph_complexity != "NA") %>% transform_data()
 data_g2p$type <- lang_to_type(as.character(data_g2p$lang))
 data_base_g2p <- group_by_base(data_g2p) %>% transform_data()
@@ -102,51 +102,51 @@ data_base_g2p$type <- lang_to_type(as.character(data_base_g2p$lang))
 
 # PC ~ MI
 plot_langs <- data_g2p %>%
-  filter(lang %in% c("Hungarian", "English", "Romanian"))
+  filter(lang %in% c("Polish", "English", "Romanian"))
 plot_langs_base <- data_base_g2p %>%
-  filter(lang %in% c("Hungarian", "English", "Romanian"))
+  filter(lang %in% c("Polish", "English", "Romanian"))
 
 plot_lang_facet_2(
-  data1 = plot_langs_base,
-  data2 = plot_langs,
-  x_axis_1 = "phon_loss",
-  y_axis_1 = "morph_complexity",
-  x_axis_2 = "phon_loss",
-  y_axis_2 = "morph_complexity",
+  data1 = plot_langs,
+  data2 = plot_langs_base,
+  x_axis = "phon_loss",
+  y_axis = "morph_complexity",
   x_lab = "Phonotactic Complexity",
   y_lab = "Morphological Irregularity",
-  lab1 = "By Lexeme",
-  lab2 = "By Word",
-  color1 = "#1A4571",
-  color2 = "#FF5A48",
-  color1_dark = "#073361",
-  color2_dark = "#FF1E06"
+  lab1 = "By Word",
+  lab2 = "By Lexeme",
+  fill1 = "#1A4571",
+  fill2 = "#FF5A48",
+  color1 = "#073361",
+  color2 = "#FF1E06",
+  frm = formula(morph_complexity ~ phon_loss + logfreq + phon_len)
 )
-ggsave("figs-final/appendix_pc_mi.png", width = 6, height = 4)
+ggsave("figs-final/appendix_pc_mi.png", width = 20, height = 14, units = "cm")
 
 # PC ~ WL
+data_words_pim$phon_loss <- data_words_pim$phoneme_loss
+data_words_pim$phon_len <- data_words_pim$phoneme_len
 plot_langs <- data_g2p %>%
-  filter(lang %in% c("Polish", "Romanian", "English"))
+  filter(lang %in% c("Chewa", "Italian", "English"))
 plot_langs_pim <- data_words_pim %>%
-  filter(lang %in% c("Polish", "Romanian", "English"))
+  filter(lang %in% c("Chewa", "Italian", "English"))
 
 plot_lang_facet_2(
-  data1 = plot_langs_pim,
-  data2 = plot_langs,
-  x_axis_1 = "phoneme_loss",
-  y_axis_1 = "phoneme_len",
-  x_axis_2 = "phon_loss",
-  y_axis_2 = "phon_len",
-  x_lab = "Phonotactic Complexity",
-  y_lab = "Word Length",
-  lab1 = "Phonotactic Data",
-  lab2 = "UniMorph Data",
-  color1 = "#482C7B",
-  color2 = "#FF6B00",
-  color1_dark = "#2F0086",
-  color2_dark = "#B54C00"
+  data2 = plot_langs_pim,
+  data1 = plot_langs,
+  x_axis = "phon_len",
+  y_axis = "phon_loss",
+  y_lab = "Phonotactic Complexity",
+  x_lab = "Word Length",
+  lab2 = "Phonotactic Data",
+  lab1 = "UniMorph Data",
+  fill1 = "#482C7B",
+  fill2 = "#FF6B00",
+  color1 = "#2F0086",
+  color2 = "#B54C00",
+  formula(phon_loss ~ phon_len)
 )
-ggsave("figs-final/appendix_pc_wl.png", width = 6, height = 4)
+ggsave("figs-final/appendix_pc_wl.png", width = 20, height = 14, units = "cm")
 
 
 # MI ~ FR
@@ -156,35 +156,35 @@ plot_langs_base <- data_base_g2p %>%
   filter(lang %in% c("Turkish", "Italian", "English"))
 
 plot_lang_facet_2(
-  data1 = plot_langs_base,
-  data2 = plot_langs,
-  x_axis_1 = "morph_complexity",
-  y_axis_1 = "logfreq",
-  x_axis_2 = "morph_complexity",
-  y_axis_2 = "logfreq",
-  x_lab = "Morphological Irregularity",
-  y_lab = "Log Frequency",
-  lab1 = "By Lexeme",
-  lab2 = "By Word",
-  color1 = "#1A4571",
-  color2 = "#FF5A48",
-  color1_dark = "#073361",
-  color2_dark = "#FF1E06"
+  data2 = plot_langs_base,
+  data1 = plot_langs,
+  x_axis = "logfreq",
+  y_axis = "morph_complexity",
+  y_lab = "Morphological Irregularity",
+  x_lab = "Log Frequency",
+  lab2 = "By Lexeme",
+  lab1 = "By Word",
+  fill1 = "#1A4571",
+  fill2 = "#FF5A48",
+  color1 = "#073361",
+  color2 = "#FF1E06",
+  formula(morph_complexity ~ logfreq)
 )
-ggsave("figs-final/appendix_mi_fr.png", width = 6, height = 4)
+ggsave("figs-final/appendix_mi_fr.png", width = 20, height = 14, units = "cm")
 
 # PC ~ FR
 plot_langs <- data_g2p %>%
-  filter(lang %in% c("Hungarian", "Swedish", "English"))
+  filter(lang %in% c("Russian", "Italian", "English"))
 
 plot_lang_facet(
   plot_langs,
-  "phon_loss",
   "logfreq",
+  "phon_loss",
+  "Log Frequency",
   "Phonotactic Complexity",
-  "Log Frequency"
+  formula(phon_loss ~ logfreq + phon_len)
 )
-ggsave("figs-final/appendix_pc_fr.png", width = 6, height = 4)
+ggsave("figs-final/appendix_pc_fr.png", width = 20, height = 14, units = "cm")
 
 # MI ~ WL
 plot_langs <- data_g2p %>%
@@ -193,122 +193,119 @@ plot_langs_base <- data_base_g2p %>%
   filter(lang %in% c("Czech", "Italian", "English"))
 
 plot_lang_facet_2(
-  data1 = plot_langs_base,
-  data2 = plot_langs,
-  x_axis_1 = "morph_complexity",
-  y_axis_1 = "phon_len",
-  x_axis_2 = "morph_complexity",
-  y_axis_2 = "phon_len",
-  x_lab = "Morphological Irregularity",
-  y_lab = "Word Length",
-  lab1 = "By Lexeme",
-  lab2 = "By Word",
-  color1 = "#1A4571",
-  color2 = "#FF5A48",
-  color1_dark = "#073361",
-  color2_dark = "#FF1E06"
+  data2 = plot_langs_base,
+  data1 = plot_langs,
+  x_axis = "phon_len",
+  y_axis = "morph_complexity",
+  y_lab = "Morphological Irregularity",
+  x_lab = "Word Length",
+  lab2 = "By Lexeme",
+  lab1 = "By Word",
+  fill1 = "#1A4571",
+  fill2 = "#FF5A48",
+  color1 = "#073361",
+  color2 = "#FF1E06",
+  formula(morph_complexity ~ phon_len + logfreq)
 )
-ggsave("figs-final/appendix_mi_wl.png", width = 6, height = 4)
+ggsave("figs-final/appendix_mi_wl.png", width = 20, height = 14, units = "cm")
 
 # WL ~ FR
 plot_langs <- data_g2p %>%
-  filter(lang %in% c("Albanian", "Mongolian", "English"))
+  filter(lang %in% c("Kazakh", "Russian", "English"))
 
 plot_lang_facet(
   plot_langs,
   "logfreq",
   "phon_len",
   "Log Frequency",
-  "Word Length")
-ggsave("figs-final/appendix_wl_fr.png", width = 6, height = 4)
+  "Word Length",
+  formula(phon_len ~ logfreq))
+ggsave("figs-final/appendix_wl_fr.png", width = 20, height = 14, units = "cm")
 
 
 
 # all language plots
 # PC ~ MI
 plot_lang_facet_2(
-  data1 = data_base_g2p,
-  data2 = data_g2p,
-  x_axis_1 = "phon_loss",
-  y_axis_1 = "morph_complexity",
-  x_axis_2 = "phon_loss",
-  y_axis_2 = "morph_complexity",
+  data1 = data_g2p,
+  data2 = data_base_g2p,
+  x_axis = "phon_loss",
+  y_axis = "morph_complexity",
   x_lab = "Phonotactic Complexity",
   y_lab = "Morphological Irregularity",
-  lab1 = "By Lexeme",
-  lab2 = "By Word",
-  color1 = "#1A4571",
-  color2 = "#FF5A48",
-  color1_dark = "#073361",
-  color2_dark = "#FF1E06"
+  lab2 = "By Lexeme",
+  lab1 = "By Word",
+  fill1 = "#1A4571",
+  fill2 = "#FF5A48",
+  color1 = "#073361",
+  color2 = "#FF1E06",
+  frm = formula(morph_complexity ~ phon_loss + logfreq + phon_len)
 )
 ggsave("figs-final/appendix_pc_mi_all.png", width = 7, height = 10)
 
 # PC ~ WL
 plot_lang_facet_2(
-  data1 = data_words_pim,
-  data2 = data_g2p,
-  x_axis_1 = "phoneme_loss",
-  y_axis_1 = "phoneme_len",
-  x_axis_2 = "phon_loss",
-  y_axis_2 = "phon_len",
-  x_lab = "Phonotactic Complexity",
-  y_lab = "Word Length",
-  lab1 = "Phonotactic Data",
-  lab2 = "UniMorph Data",
-  color1 = "#482C7B",
-  color2 = "#FF6B00",
-  color1_dark = "#2F0086",
-  color2_dark = "#B54C00"
+  data2 = data_words_pim,
+  data1 = data_g2p,
+  x_axis = "phon_len",
+  y_axis = "phon_loss",
+  y_lab = "Phonotactic Complexity",
+  x_lab = "Word Length",
+  lab2 = "Phonotactic Data",
+  lab1 = "UniMorph Data",
+  fill1 = "#482C7B",
+  fill2 = "#FF6B00",
+  color1 = "#2F0086",
+  color2 = "#B54C00",
+  formula(phon_loss ~ phon_len)
 )
 ggsave("figs-final/appendix_pc_wl_all.png", width = 7, height = 10)
 
 
 # MI ~ FR
 plot_lang_facet_2(
-  data1 = data_base_g2p,
-  data2 = data_g2p,
-  x_axis_1 = "morph_complexity",
-  y_axis_1 = "logfreq",
-  x_axis_2 = "morph_complexity",
-  y_axis_2 = "logfreq",
-  x_lab = "Morphological Irregularity",
-  y_lab = "Log Frequency",
-  lab1 = "By Lexeme",
-  lab2 = "By Word",
-  color1 = "#1A4571",
-  color2 = "#FF5A48",
-  color1_dark = "#073361",
-  color2_dark = "#FF1E06"
+  data1 = data_g2p,
+  data2 = data_base_g2p,
+  x_axis = "logfreq",
+  y_axis = "morph_complexity",
+  y_lab = "Morphological Irregularity",
+  x_lab = "Log Frequency",
+  lab2 = "By Lexeme",
+  lab1 = "By Word",
+  fill1 = "#1A4571",
+  fill2 = "#FF5A48",
+  color1 = "#073361",
+  color2 = "#FF1E06",
+  formula(morph_complexity ~ logfreq)
 )
 ggsave("figs-final/appendix_mi_fr_all.png", width = 7, height = 10)
 
 # PC ~ FR
 plot_lang_facet(
   data_g2p,
-  "phon_loss",
   "logfreq",
+  "phon_loss",
+  "Log Frequency",
   "Phonotactic Complexity",
-  "Log Frequency"
+  formula(phon_loss ~ logfreq + phon_len)
 )
 ggsave("figs-final/appendix_pc_fr_all.png", width = 7, height = 10)
 
 # MI ~ WL
 plot_lang_facet_2(
-  data1 = data_base_g2p,
-  data2 = data_g2p,
-  x_axis_1 = "morph_complexity",
-  y_axis_1 = "phon_len",
-  x_axis_2 = "morph_complexity",
-  y_axis_2 = "phon_len",
-  x_lab = "Morphological Irregularity",
-  y_lab = "Word Length",
-  lab1 = "By Lexeme",
-  lab2 = "By Word",
-  color1 = "#1A4571",
-  color2 = "#FF5A48",
-  color1_dark = "#073361",
-  color2_dark = "#FF1E06"
+  data1 = data_g2p,
+  data2 = data_base_g2p,
+  x_axis = "phon_len",
+  y_axis = "morph_complexity",
+  y_lab = "Morphological Irregularity",
+  x_lab = "Word Length",
+  lab2 = "By Lexeme",
+  lab1 = "By Word",
+  fill1 = "#1A4571",
+  fill2 = "#FF5A48",
+  color1 = "#073361",
+  color2 = "#FF1E06",
+  formula(morph_complexity ~ phon_len + logfreq)
 )
 ggsave("figs-final/appendix_mi_wl_all.png", width = 7, height = 10)
 
@@ -318,6 +315,6 @@ plot_lang_facet(
   "logfreq",
   "phon_len",
   "Log Frequency",
-  "Word Length"
-)
+  "Word Length",
+  formula(phon_len ~ logfreq))
 ggsave("figs-final/appendix_wl_fr_all.png", width = 7, height = 10)
