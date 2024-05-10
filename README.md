@@ -9,7 +9,20 @@ git submodule init
 git submodule update
 ```
 
-To run the experiments and produce the figures in the paper, follow these steps:
+The data used to produce the figures in the paper can be found in three files on OSF [here](https://osf.io/b3mf8), [here](https://osf.io/8wntf), and [here](https://osf.io/dc27h). To reproduce the plots and run regression models from the paper:
+
+```
+mkdir figs-final
+Rscript r/figures-models.R
+```
+
+Appendix plots, along with additional plots of individual languages, can be generated with:
+
+```
+Rscript r/appendix-figures.R
+```
+
+To reproduce the data used in the figures, follow these steps. Steps 3 and 4 involve training neural networks, and benefit from running on a GPU -- they will not complete in a reasonable amount of time on a single CPU.
 
 ### 1. Download Data
 
@@ -21,7 +34,7 @@ make download_wikipron
 
 ### 2. Process Unimorph
 
-Get G2P transcriptsion:
+Get G2P transcription:
 
 ```
 python src/unimorph_to_ipa.py
@@ -64,21 +77,6 @@ Get phonotactic complexity scores for UniMorph:
 
 ```
 python src/generate_data.py
-```
-
-### 7. Generate Plots
-
-Main plots and models:
-
-```
-mkdir figs-final
-Rscript r/figures-models.R
-```
-
-Appendix plots:
-
-```
-Rscript r/appendix-figures.R
 ```
 
 ## Requirements

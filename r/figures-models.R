@@ -123,7 +123,7 @@ mi.pc.lem <- model.by.lang(
   formula(morph_complexity_z ~ phon_loss_z + logfreq_z + phon_len_z),
   "phon_loss_z"
 )
-plot.by.lang.2(mi.pc.lem, mi.pc, "By Lexeme", "By Word")
+plot.by.lang.2(mi.pc.lem, mi.pc, "By Lemma", "By Word")
 ggsave(
   "figs-final/corr_mi_pc_g2p.png", width = 20, height = 14, units = "cm"
 )
@@ -161,7 +161,7 @@ mi.fr.lem <- model.by.lang(
   formula(morph_complexity_z ~ logfreq_z),
   "logfreq_z"
 )
-plot.by.lang.2(mi.fr.lem, mi.fr, "By Lexeme", "By Word")
+plot.by.lang.2(mi.fr.lem, mi.fr, "By Lemma", "By Word")
 ggsave("figs-final/corr_mi_fr_g2p.png", width = 20, height = 14, units = "cm")
 
 wl.fr <- model.by.lang(
@@ -182,7 +182,7 @@ mi.wl.lem <- model.by.lang(
   formula(morph_complexity_z ~ phon_len_z + logfreq_z),
   "phon_len_z"
 )
-plot.by.lang.2(mi.wl.lem, mi.wl, "By Lexeme", "By Word")
+plot.by.lang.2(mi.wl.lem, mi.wl, "By Lemma", "By Word")
 ggsave("figs-final/corr_mi_wl_g2p.png", width = 20, height = 14, units = "cm")
 
 pc_means <- data_g2p %>%
@@ -211,8 +211,8 @@ data_pim %>% ggplot(aes(x = val_loss, y = avg_len)) +
   ) +
   theme_hc() +
   scale_x_log10(expand = expansion(mult = 0.1)) +
-  ylab("Average Length (# IPA Tokens)") +
-  xlab("Bits Per Phoneme") +
+  ylab("Word Length") +
+  xlab("Phonotactic Complexity") +
   theme(text = element_text(family = "Times", size = 18))
 
 ggsave("figs-final/pim.png", width = 20, height = 14, units = "cm")
